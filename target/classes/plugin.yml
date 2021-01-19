@@ -1,0 +1,7 @@
+name: MoreHunger
+version: 1.0.0
+description: Hello 1234
+author: Schmidi
+main: de.noel.Start
+api-version: 1.13
+commands:
