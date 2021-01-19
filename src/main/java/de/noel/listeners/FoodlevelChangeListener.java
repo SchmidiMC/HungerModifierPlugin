@@ -3,24 +3,24 @@ package de.noel.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 
+import de.noel.Start;
 import de.schmidimc.mc.common.annotation.Listener;
 
 @Listener
 public class FoodlevelChangeListener {
 
-	public FoodlevelChangeListener() {
-		// TODO Auto-generated constructor stub
+	private Start plugin;
+
+	public FoodlevelChangeListener(Start plugin) {
+		this.plugin = plugin;
 	}
-	
+
 	@EventHandler
 	public void onFoodlevelChange(FoodLevelChangeEvent event) {
-		/*
-		 * TODO 
-		 * if(changing by default is disabled) {
-		 * 	if allowed to change -> change;
-		 * }
-		 * 
-		 */
+		if (!this.plugin.defaultFoodActivated()) {
+			event.setCancelled(true);
+		}
+
 	}
-	
+
 }

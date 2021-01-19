@@ -1,9 +1,7 @@
 package de.noel;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
@@ -11,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import de.noel.config.SettingsConfig;
 import de.noel.controller.ListenerController;
+import de.noel.model.ActivatedTracker;
 import de.noel.repository.ListenerPointsRepository;
 import de.noel.services.ActivatedTrackersService;
 import de.noel.services.PlayerFoodService;
@@ -40,13 +39,20 @@ public class Start extends JavaPlugin {
 
 		this.settingsConfig = new SettingsConfig(this);
 		
-		this.playerFoodService = new PlayerFoodService();
+		this.playerFoodService = new PlayerFoodService(this.settingsConfig.getMaxPoints(), this.settingsConfig.getLossingFoodLevel());
 
 		this.listenerController = new ListenerController(playerFoodService);
+		
+		
+		Map<ActivatedTracker, Double> activeTrackerPoints = this.settingsConfig.getAllTrackerPoints();
+		
+		this.listenerPointRepo = new ListenerPointsRepository(activeTrackerPoints);
 
-		this.listenerPointRepo = new ListenerPointsRepository(this.settingsConfig.getAllTrackerPoints());
-
-		this.activatedTrackerService = new ActivatedTrackersService(this.listenerController);
+		Map<ActivatedTracker, Boolean> activatedTrackers = new HashMap<>();
+		for(ActivatedTracker tracker : ActivatedTracker.values()) {
+			activatedTrackers.put(tracker, activeTrackerPoints.containsKey(tracker));
+		}
+		this.activatedTrackerService = new ActivatedTrackersService(activatedTrackers, this.listenerController);
 
 		ChatManager.sendMessage(console, "MoreHunger was started successfully.");
 	}
@@ -55,5 +61,9 @@ public class Start extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		this.settingsConfig.saveConfig();
+	}
+	
+	public boolean defaultFoodActivated() {
+		return this.settingsConfig.usingDefaultFood();
 	}
 }

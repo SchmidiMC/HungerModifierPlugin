@@ -12,12 +12,6 @@ public class PlayerFoodService {
 	private double maxPoints;
 	private int loosingFoodLevels;
 
-	public PlayerFoodService() {
-		this.playerFoodPoints = new HashMap<>();
-		this.maxPoints = 100.0;
-		this.loosingFoodLevels = 2;
-	}
-	
 	/***
 	 * 
 	 * @param maxPoints - defines the amount of points a player requires to loose a defined foodlevel.
